@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
+import 'otpScreen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -98,13 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               InkWell(
                 onTap: () {
-                  // Navigator.pushReplacement(
-                  //     context,
-                  //     CupertinoPageRoute(
-                  //       builder: (context) => OtpScreen(
-                  //         phoneNumber: phoneController.text.trim(),
-                  //       ),
-                  //     ));
+                  Navigator.pushReplacement(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => OtpScreen(
+                          phoneNumber: phoneController.text.trim(),
+                        ),
+                      ));
                 },
                 child: Container(
                   height: height * 0.06,
