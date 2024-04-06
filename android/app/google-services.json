@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "497046905003",
+    "project_id": "totalxtask-a1331",
+    "storage_bucket": "totalxtask-a1331.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497046905003:android:7421a40af8805189dd97ee",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc_XSfV6QKvmtDcu5Ii3sGMivu1iuBVJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497046905003:android:ab8e2fe71bc9ce5ddd97ee",
+        "android_client_info": {
+          "package_name": "com.example.flutter_task_totalx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc_XSfV6QKvmtDcu5Ii3sGMivu1iuBVJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
