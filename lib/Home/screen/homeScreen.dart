@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_task_totalx/Block/homeBlock/home_bloc.dart';
+import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
+import 'package:flutter_task_totalx/userModel.dart';
 
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -97,50 +100,51 @@ class _HomeScreenState extends State<HomeScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: 15,
                       itemBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
-                        child: Container(
-                          height: height * 0.1,
-                          width: width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(6),
-                                child: CircleAvatar(
-                                  backgroundImage: AssetImage(
-                                      AssetsConstant.loginImage),
-                                  radius: height * 0.05,
-                                ),
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            child: Container(
+                              height: height * 0.1,
+                              width: width,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
                               ),
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'User Name',
-                                    style: TextStyle(
-                                        fontSize: width * 0.04,
-                                        color: Colors.black),
+                                  Padding(
+                                    padding: EdgeInsets.all(6),
+                                    child: CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(AssetsConstant.loginImage),
+                                      radius: height * 0.05,
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Age: 35',
-                                    style: TextStyle(
-                                        fontSize: width * 0.035,
-                                        color: Colors.grey.shade600),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'User Name',
+                                        style: TextStyle(
+                                            fontSize: width * 0.04,
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Age: 35',
+                                        style: TextStyle(
+                                            fontSize: width * 0.035,
+                                            color: Colors.grey.shade600),
+                                      )
+                                    ],
                                   )
                                 ],
-                              )
-                            ],
-                          ),
-                        ),
-                      )),
+                              ),
+                            ),
+                          )),
                 )
               ],
             ),
@@ -163,113 +167,184 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  Future<void> addNewUser({required BuildContext context})async{
-    TextEditingController nameController=TextEditingController();
-    TextEditingController ageController=TextEditingController();
-    showDialog(context: context, builder:(context) => AlertDialog(
-      title: Text('Add A New User'),
-      content: SizedBox(
-        height: height*0.3,
-        width: width*0.8,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: height*0.1,width: width,child: Image.asset(AssetsConstant.defaultAvatar),),
-            Text('Name'),
-            SizedBox(
-              height: height * 0.06,
-              child: TextFormField(
-                controller: nameController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    hintText: 'Name',
-                    hintStyle: TextStyle(
-                        fontSize: width * 0.035, color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade100))),
-              ),
-            ),
-            Text('Age'),
-            SizedBox(
-              height: height * 0.06,
-              child: TextFormField(
-                controller: ageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    hintText: 'Age',
-                    hintStyle: TextStyle(
-                        fontSize: width * 0.035, color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade100))),
-              ),
-            ),
-          ],),
-      ),
-      actions: [
-        InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.grey.shade200),
-            height: height*0.04,width: width*0.25,child: Center(child: Text('Cancel'),),),
-        ),
-        InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.blueAccent),
-            height: height*0.04,width: width*0.25,child: Center(child: Text('Save'),),),
-        )
-      ],
-    ),);
-  }
-  void sortingBox({required BuildContext context}){
-    int sortingValue=0;
-    showDialog(context: context, builder: (context) => AlertDialog(
-      title: Text('Sort'),
-      content: StatefulBuilder(
-        builder:(context, setState) =>  SizedBox(
-          height: height*0.3,
+
+  Future<void> addNewUser({required BuildContext context}) async {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController ageController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add A New User'),
+        content: SizedBox(
+          height: height * 0.3,
+          width: width * 0.8,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Radio(value:0, groupValue: sortingValue, onChanged:(value) {
-                    setState((){
-                      sortingValue=value!;
-                    });
-                  },),
-                  SizedBox(width: 10,),
-                  Text('All')
-                ],
-              ),Row(
-                children: [
-                  Radio(value:1, groupValue: sortingValue, onChanged:(value) {
-                    setState((){
-                      sortingValue=value!;
-                    });                },),
-                  SizedBox(width: 10,),
-                  Text('Age: Elder')
-                ],
-              ),Row(
-                children: [
-                  Radio(value:2, groupValue: sortingValue, onChanged:(value) {
-                    setState((){
-                      sortingValue=value!;
-                    });
-                  },),
-                  SizedBox(width: 10,),
-                  Text('Age: Younger')
-                ],
+              SizedBox(
+                height: height * 0.1,
+                width: width,
+                child: Image.asset(AssetsConstant.defaultAvatar),
+              ),
+              Text('Name'),
+              SizedBox(
+                height: height * 0.06,
+                child: TextFormField(
+                  controller: nameController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      hintText: 'Name',
+                      hintStyle: TextStyle(
+                          fontSize: width * 0.035, color: Colors.grey),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade100))),
+                ),
+              ),
+              Text('Age'),
+              SizedBox(
+                height: height * 0.06,
+                child: TextFormField(
+                  controller: ageController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      hintText: 'Age',
+                      hintStyle: TextStyle(
+                          fontSize: width * 0.035, color: Colors.grey),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade100))),
+                ),
               ),
             ],
           ),
         ),
+        actions: [
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey.shade200),
+              height: height * 0.04,
+              width: width * 0.25,
+              child: Center(
+                child: Text('Cancel'),
+              ),
+            ),
+          ),
+          BlocConsumer<HomeBloc, HomeState>(
+            listener: (context, state) {
+              if (state is HomeSuccess) {
+                showSnackBar(message: 'add user Success', context: context);
+                Navigator.pop(context);
+              }
+              if (state is HomeFailure) {
+                showSnackBar(message: 'adding Failed', context: context);
+              }
+            },
+            builder: (context, state) {
+              if (state is HomeLoader) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return InkWell(
+                onTap: () {
+                  context.read<HomeBloc>().add(AddUser(
+                      userModel: UserModel(
+                          image: '',
+                          age: int.tryParse(ageController.text.trim()) ?? 0,
+                          name: nameController.text.trim(),
+                          search: [])));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.blueAccent),
+                  height: height * 0.04,
+                  width: width * 0.25,
+                  child: Center(
+                    child: Text('Save'),
+                  ),
+                ),
+              );
+            },
+          )
+        ],
       ),
-    ),);
+    );
+  }
+
+  void sortingBox({required BuildContext context}) {
+    int sortingValue = 0;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Sort'),
+        content: StatefulBuilder(
+          builder: (context, setState) => SizedBox(
+            height: height * 0.3,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: 0,
+                      groupValue: sortingValue,
+                      onChanged: (value) {
+                        setState(() {
+                          sortingValue = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('All')
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 1,
+                      groupValue: sortingValue,
+                      onChanged: (value) {
+                        setState(() {
+                          sortingValue = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Age: Elder')
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio(
+                      value: 2,
+                      groupValue: sortingValue,
+                      onChanged: (value) {
+                        setState(() {
+                          sortingValue = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Age: Younger')
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,60 +1,46 @@
-class UserModel{
-  final String id;
-  final int age;
+class UserModel {
   final String name;
-  final String profile;
-  final int phoneNumber;
-  final DateTime dateTime;
+  final String image;
+  final int age;
+  final List search;
 
 //<editor-fold desc="Data Methods">
   const UserModel({
-    required this.id,
-    required this.age,
     required this.name,
-    required this.profile,
-    required this.phoneNumber,
-    required this.dateTime,
+    required this.image,
+    required this.age,
+    required this.search,
   });
 
-
-
   UserModel copyWith({
-    String? id,
-    int? age,
     String? name,
-    String? profile,
-    int? phoneNumber,
-    DateTime? dateTime,
+    String? image,
+    int? age,
+    List? search,
   }) {
     return UserModel(
-      id: id ?? this.id,
-      age: age ?? this.age,
       name: name ?? this.name,
-      profile: profile ?? this.profile,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      dateTime: dateTime ?? this.dateTime,
+      image: image ?? this.image,
+      age: age ?? this.age,
+      search: search ?? this.search,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'age': this.age,
       'name': this.name,
-      'profile': this.profile,
-      'phoneNumber': this.phoneNumber,
-      'dateTime': this.dateTime,
+      'image': this.image,
+      'age': this.age,
+      'search': this.search,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as String,
-      age: map['age'] as int,
       name: map['name'] as String,
-      profile: map['profile'] as String,
-      phoneNumber: map['phoneNumber'] as int,
-      dateTime: map['dateTime'] as DateTime,
+      image: map['image'] as String,
+      age: map['age'] as int,
+      search: map['search'] as List,
     );
   }
 

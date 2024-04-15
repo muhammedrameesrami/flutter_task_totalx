@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_task_totalx/Block/authBlock/authk_bloc.dart';
+import 'package:provider/provider.dart';
 
+import '../../Core/Common/SnackBar/ShowSnackBar.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
 import 'otpScreen.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phoneController = TextEditingController();
+
   @override
   void dispose() {
     phoneController.dispose();
@@ -97,29 +101,50 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: height * 0.03,
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => OtpScreen(
-                          phoneNumber: phoneController.text.trim(),
-                        ),
-                      ));
+              BlocConsumer<AuthkBloc, AuthkState>(
+                listener: (context, state) {
+                  if (state is AuthKSuccess) {
+
+                  }
+                  if (state is AuthkFailure) {
+                    print(state.error);
+                    print("iooioiii");
+                    showSnackBar(message: state.error, context: context);
+                  }
                 },
-                child: Container(
-                  height: height * 0.06,
-                  width: width,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(height * 0.25),
-                      color: Colors.black),
-                  child: Center(
-                      child: Text(
+                builder: (context, state) {
+                  if (state is AuthkLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return InkWell(
+                    onTap: () {
+                      context.read<AuthkBloc>().add(OtpVerificationRequested(
+                          phoneNumber: phoneController.text));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OtpScreen(
+                              phoneNumber: phoneController.text.trim(),
+                            ),
+                          ));
+                    },
+                    child: Container(
+                      height: height * 0.06,
+                      width: width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(height * 0.25),
+                          color: Colors.black),
+                      child: Center(
+                          child: Text(
                         'Get OTP',
-                        style:
-                        TextStyle(fontSize: width * 0.05, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: width * 0.05, color: Colors.white),
                       )),
-                ),
+                    ),
+                  );
+                },
               )
             ],
           ),
