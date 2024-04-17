@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
 import 'package:pinput/pinput.dart';
 // import 'package:pinput/pinput.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
 import '../../Home/screen/homeScreen.dart';
+import '../authBlock/authk_bloc.dart';
 
 
 class OtpScreen extends StatefulWidget {
+  final String verificationId;
   final String phoneNumber;
-  const OtpScreen({super.key, required this.phoneNumber});
+  const OtpScreen({super.key, required this.verificationId,required this.phoneNumber});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -78,9 +82,23 @@ class _OtpScreenState extends State<OtpScreen> {
                       ))
                 ],
               ),
-              InkWell(
+              BlocConsumer<AuthkBloc, AuthkState>(
+  listener: (context, state) {
+if(state is AuthKSuccess){
+  Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+
+}if(state is AuthkFailure){
+  showSnackBar(message: state.error, context: context);
+}
+  },
+  builder: (context, state) {
+    if(state is AuthkLoading){
+      return Center(child: CircularProgressIndicator(),);
+    }
+    return InkWell(
                 onTap: () {
-                  Navigator.pushReplacement(context,CupertinoPageRoute(builder: (context) => HomeScreen(),));
+                  // context.read<AuthkBloc>().add(OtpVerification(otp: otpController.text.trim(), verificationId: widget.verificationId));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                 },
                 child: Container(
                   height: height * 0.06,
@@ -96,7 +114,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     ),
                   ),
                 ),
-              )
+              );
+  },
+)
             ],
           ),
         ),

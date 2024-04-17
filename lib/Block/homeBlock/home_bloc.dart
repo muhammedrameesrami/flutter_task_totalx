@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_task_totalx/Block/authBlock/authk_bloc.dart';
 import 'package:flutter_task_totalx/Core/Common/firebaseConstant/firebaseConstants.dart';
 import 'package:flutter_task_totalx/userModel.dart';
 import 'package:meta/meta.dart';

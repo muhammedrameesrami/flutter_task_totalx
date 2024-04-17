@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_task_totalx/Block/homeBlock/home_bloc.dart';
-import 'Block/authBlock/authk_bloc.dart';
+import 'Auth/authBlock/authk_bloc.dart';
+import 'Block/homeBlock/home_bloc.dart';
 import 'Core/Common/splashScreen/splashScreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'Home/HomeBlock/homek_bloc.dart';
 import 'firebase_options.dart';
 
 void main()async {
@@ -23,9 +25,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-      BlocProvider(create: (context)=>AuthkBloc()),
-      BlocProvider(create: (context)=>HomeBloc(FirebaseFirestore.instance)),
-        
+      BlocProvider(create: (context)=>AuthkBloc(firebaseAuth: FirebaseAuth.instance)),
+      BlocProvider(create: (context)=>HomeBloc( firebaseFirestore: FirebaseFirestore.instance)),
+      BlocProvider(create: (context)=>HomekBloc(firebaseFirestore: FirebaseFirestore.instance)),
       ],
       child: MaterialApp(debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

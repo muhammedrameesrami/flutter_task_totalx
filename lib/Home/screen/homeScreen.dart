@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_task_totalx/Block/homeBlock/home_bloc.dart';
+import 'package:flutter_task_totalx/Auth/authBlock/authk_bloc.dart';
 import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
+import 'package:flutter_task_totalx/Home/HomeBlock/homek_bloc.dart';
+import 'package:flutter_task_totalx/Home/storageBlock/storage_bloc.dart';
 import 'package:flutter_task_totalx/userModel.dart';
 
+import '../../Block/homeBlock/home_bloc.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
 
@@ -15,6 +18,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
+      context.read<HomekBloc>().add(FetchUserData());
+
+    });
+  }
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -32,7 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         backgroundColor: Colors.grey.shade200,
-        body: Padding(
+        body: BlocBuilder<HomekBloc, List<UserModel>>(
+  builder: (context, state) {
+    if(state.isEmpty){
+      return Center(child: Text('No data'),);
+    }
+    return Padding(
           padding: EdgeInsets.only(
               left: width * 0.03, right: width * 0.03, top: width * 0.03),
           child: SingleChildScrollView(
@@ -98,58 +115,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: 15,
-                      itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5),
-                            child: Container(
-                              height: height * 0.1,
-                              width: width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
+                      itemCount: state.length,
+                      itemBuilder: (context, index) {
+                        final user=state[index];
+                        return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Container(
+                          height: height * 0.1,
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(6),
+                                child: user.image.isEmpty?CircleAvatar(
+                                  backgroundImage:
+                                  AssetImage(AssetsConstant.loginImage),
+                                  radius: height * 0.05,
+                                ):CircleAvatar(
+                                  backgroundImage:
+                                  NetworkImage(user.image),
+                                  radius: height * 0.05,
+                                ),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                              Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(6),
-                                    child: CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage(AssetsConstant.loginImage),
-                                      radius: height * 0.05,
-                                    ),
+                                  Text(
+                                    'User : ${user.name}',
+                                    style: TextStyle(
+                                        fontSize: width * 0.04,
+                                        color: Colors.black),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'User Name',
-                                        style: TextStyle(
-                                            fontSize: width * 0.04,
-                                            color: Colors.black),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'Age: 35',
-                                        style: TextStyle(
-                                            fontSize: width * 0.035,
-                                            color: Colors.grey.shade600),
-                                      )
-                                    ],
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Age: ${user.age}',
+                                    style: TextStyle(
+                                        fontSize: width * 0.035,
+                                        color: Colors.grey.shade600),
                                   )
                                 ],
-                              ),
-                            ),
-                          )),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                      }),
                 )
               ],
             ),
           ),
-        ),
+        );
+  },
+),
         floatingActionButton: InkWell(
           onTap: () {
             addNewUser(context: context);
@@ -181,17 +207,29 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: height * 0.1,
-                width: width,
-                child: Image.asset(AssetsConstant.defaultAvatar),
-              ),
+              BlocBuilder<StorageBloc, StorageState>(
+  builder: (context, state) {
+    if(state is StorageSuccess){
+      return SizedBox(
+        height: height * 0.1,
+        width: width,
+        child: Image.network(state.url),
+      );
+    }
+    return InkWell(onTap: (){context.read<StorageBloc>().add(AddDocStorage());},
+                child: SizedBox(
+                  height: height * 0.1,
+                  width: width,
+                  child: Image.asset(AssetsConstant.defaultAvatar),
+                ),
+              );
+  },
+),
               Text('Name'),
               SizedBox(
                 height: height * 0.06,
                 child: TextFormField(
                   controller: nameController,
-                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       hintText: 'Name',
                       hintStyle: TextStyle(
@@ -253,12 +291,14 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               return InkWell(
                 onTap: () {
+                  final userModel=UserModel(
+                      image: '',
+                      age: int.tryParse(ageController.text.trim()) ?? 0,
+                      name: nameController.text.trim(),
+                      search: []);
                   context.read<HomeBloc>().add(AddUser(
-                      userModel: UserModel(
-                          image: '',
-                          age: int.tryParse(ageController.text.trim()) ?? 0,
-                          name: nameController.text.trim(),
-                          search: [])));
+                      userModel: userModel));
+                  context.read<HomekBloc>().add(AddUserModel(userModel: userModel));
                 },
                 child: Container(
                   decoration: BoxDecoration(
