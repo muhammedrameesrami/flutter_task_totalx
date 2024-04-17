@@ -12,3 +12,7 @@ final class AddUserModel extends HomekEvent {
   final UserModel userModel;
   AddUserModel({required this.userModel});
 }
+final class SearchUser extends HomekEvent{
+  final String search;
+  SearchUser({required this.search});
+}

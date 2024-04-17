@@ -21,12 +21,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try{
       final result=await _firebaseFirestore.collection(FirebaseConstants.userCollection)
           .add(event.userModel.toMap()).then((value) {
-          final user= event.userModel.copyWith();
+          final user= event.userModel.copyWith(search: setSearchParam(event.userModel.name,));
 value.update(user.toMap());
 return emit(HomeSuccess());
       });
     }catch (e){
       return emit(HomeFailure(error: e.toString()));
     }
+  }
+
+  setSearchParam(String caseNumber) {
+    List<String> caseSearchList = <String>[];
+    String temp = "";
+
+    List<String> nameSplits = caseNumber.split(" ");
+    for (int i = 0; i < nameSplits.length; i++) {
+      String name = "";
+
+      for (int k = i; k < nameSplits.length; k++) {
+        name = "$name${nameSplits[k]} ";
+      }
+      temp = "";
+
+      for (int j = 0; j < name.length; j++) {
+        temp = temp + name[j];
+        caseSearchList.add(temp.toUpperCase());
+      }
+    }
+    return caseSearchList;
   }
 }

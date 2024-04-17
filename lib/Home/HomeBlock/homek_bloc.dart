@@ -27,6 +27,20 @@ emit(fetchUsers);
     on<AddUserModel>((event, emit) async {
       emit(state+[event.userModel]);
     });
+
+    on<SearchUser>((event, emit) async {
+var users=[...state];
+
+List<UserModel> user= [];
+if(event.search.isNotEmpty)
+for(int i =0;i<users.length;i++){
+  if(users[i].search.contains(event.search.toUpperCase())){
+    print("ys");
+    user.add(users[i]);
+  }
+}
+emit(user);
+    });
   }
 
   Future<List<UserModel>> fetchAllUser() async {

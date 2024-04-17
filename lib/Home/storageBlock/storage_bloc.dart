@@ -3,22 +3,19 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:meta/meta.dart';
-
-import '../../Core/Common/failure/failure.dart';
 
 part 'storage_event.dart';
 part 'storage_state.dart';
 
 class StorageBloc extends Bloc<StorageEvent, StorageState> {
-  StorageBloc() : super(StorageInitial()) {
+  final FirebaseStorage _firebaseStorage;
+  StorageBloc({required FirebaseStorage firebaseStorage}) : _firebaseStorage=firebaseStorage,super(StorageInitial()) {
     on<AddDocStorage>(addImageToStorage);
   }
 
    addImageToStorage(AddDocStorage event,Emitter <StorageState>state) async {
      emit(StorageLoader());
-
      try {
       String downloadUrl='';
       File? selectedImageInBytes;
@@ -35,7 +32,7 @@ class StorageBloc extends Bloc<StorageEvent, StorageState> {
         return emit(StorageFailure(error: 'Selected file is not an image'));
       }
 
-      var storageRef = FirebaseStorage.instance
+      var storageRef = _firebaseStorage
           .ref()
           .child("docs/images/${DateTime.now().microsecondsSinceEpoch}");
       final metaData = SettableMetadata(contentType: 'image/jpeg');

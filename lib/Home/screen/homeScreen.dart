@@ -6,9 +6,9 @@ import 'package:flutter_task_totalx/Home/HomeBlock/homek_bloc.dart';
 import 'package:flutter_task_totalx/Home/storageBlock/storage_bloc.dart';
 import 'package:flutter_task_totalx/userModel.dart';
 
-import '../../Block/homeBlock/home_bloc.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
+import '../addhomeBlock/home_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,9 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
       context.read<HomekBloc>().add(FetchUserData());
-
     });
   }
+
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -45,137 +45,145 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.grey.shade200,
         body: BlocBuilder<HomekBloc, List<UserModel>>(
-  builder: (context, state) {
-    if(state.isEmpty){
-      return Center(child: Text('No data'),);
-    }
-    return Padding(
-          padding: EdgeInsets.only(
-              left: width * 0.03, right: width * 0.03, top: width * 0.03),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          builder: (context, state) {
+            if (state.isEmpty) {
+              return Center(
+                child: Text('No data'),
+              );
+            }
+            return Padding(
+              padding: EdgeInsets.only(
+                  left: width * 0.03, right: width * 0.03, top: width * 0.03),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: height * 0.06,
-                      width: width * 0.8,
-                      child: TextFormField(
-                        controller: searchController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.search),
-                          hintText: 'search by name',
-                          hintStyle: TextStyle(
-                              fontSize: width * 0.035,
-                              color: Colors.grey.shade600),
-                          // hintText: 'Enter Phone Number *',
-                          // hintStyle: TextStyle(fontSize: width*0.035,color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(height * 0.3),
-                            borderSide: BorderSide(color: Colors.grey.shade100),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          height: height * 0.06,
+                          width: width * 0.8,
+                          child: TextFormField(onChanged: (value) {
+                            context.read<HomekBloc>().add(SearchUser(search: value));
+                          },
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search),
+                              hintText: 'search by name',
+                              hintStyle: TextStyle(
+                                  fontSize: width * 0.035,
+                                  color: Colors.grey.shade600),
+                              // hintText: 'Enter Phone Number *',
+                              // hintStyle: TextStyle(fontSize: width*0.035,color: Colors.grey),
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(height * 0.3),
+                                borderSide:
+                                    BorderSide(color: Colors.grey.shade100),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        InkWell(
+                          onTap: () {
+                            sortingBox(context: context);
+                          },
+                          child: Container(
+                            height: height * 0.05,
+                            width: height * 0.05,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.black),
+                            child: Icon(
+                              Icons.filter_list_sharp,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    InkWell(
-                      onTap: () {
-                        sortingBox(context: context);
-                      },
-                      child: Container(
-                        height: height * 0.05,
-                        width: height * 0.05,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.black),
-                        child: Icon(
-                          Icons.filter_list_sharp,
-                          color: Colors.white,
-                        ),
-                      ),
+                    SizedBox(
+                      height: height * 0.02,
+                    ),
+                    Text(
+                      'Users List',
+                      style: TextStyle(
+                          fontSize: width * 0.04, color: Colors.grey.shade700),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: height,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: state.length,
+                          itemBuilder: (context, index) {
+                            final user = state[index];
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Container(
+                                height: height * 0.1,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(6),
+                                      child: user.image.isEmpty
+                                          ? CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  AssetsConstant.loginImage),
+                                              radius: height * 0.05,
+                                            )
+                                          : CircleAvatar(
+                                              backgroundImage:
+                                                  NetworkImage(user.image),
+                                              radius: height * 0.05,
+                                            ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'User : ${user.name}',
+                                          style: TextStyle(
+                                              fontSize: width * 0.04,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          'Age: ${user.age}',
+                                          style: TextStyle(
+                                              fontSize: width * 0.035,
+                                              color: Colors.grey.shade600),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
                     )
                   ],
                 ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  'Users List',
-                  style: TextStyle(
-                      fontSize: width * 0.04, color: Colors.grey.shade700),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                SizedBox(
-                  height: height,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: state.length,
-                      itemBuilder: (context, index) {
-                        final user=state[index];
-                        return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
-                        child: Container(
-                          height: height * 0.1,
-                          width: width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(6),
-                                child: user.image.isEmpty?CircleAvatar(
-                                  backgroundImage:
-                                  AssetImage(AssetsConstant.loginImage),
-                                  radius: height * 0.05,
-                                ):CircleAvatar(
-                                  backgroundImage:
-                                  NetworkImage(user.image),
-                                  radius: height * 0.05,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'User : ${user.name}',
-                                    style: TextStyle(
-                                        fontSize: width * 0.04,
-                                        color: Colors.black),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Age: ${user.age}',
-                                    style: TextStyle(
-                                        fontSize: width * 0.035,
-                                        color: Colors.grey.shade600),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                      }),
-                )
-              ],
-            ),
-          ),
-        );
-  },
-),
+              ),
+            );
+          },
+        ),
         floatingActionButton: InkWell(
           onTap: () {
             addNewUser(context: context);
@@ -208,23 +216,36 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               BlocBuilder<StorageBloc, StorageState>(
-  builder: (context, state) {
-    if(state is StorageSuccess){
-      return SizedBox(
-        height: height * 0.1,
-        width: width,
-        child: Image.network(state.url),
-      );
-    }
-    return InkWell(onTap: (){context.read<StorageBloc>().add(AddDocStorage());},
-                child: SizedBox(
-                  height: height * 0.1,
-                  width: width,
-                  child: Image.asset(AssetsConstant.defaultAvatar),
-                ),
-              );
-  },
-),
+                builder: (context, state) {
+                  if (state is AuthkLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (state is StorageSuccess) {
+                    return InkWell(
+                      onTap: () {
+                        context.read<StorageBloc>().add(AddDocStorage());
+                      },
+                      child: SizedBox(
+                        height: height * 0.1,
+                        width: width,
+                        child: Image.network(state.url),
+                      ),
+                    );
+                  }
+                  return InkWell(
+                    onTap: () {
+                      context.read<StorageBloc>().add(AddDocStorage());
+                    },
+                    child: SizedBox(
+                      height: height * 0.1,
+                      width: width,
+                      child: Image.asset(AssetsConstant.defaultAvatar),
+                    ),
+                  );
+                },
+              ),
               Text('Name'),
               SizedBox(
                 height: height * 0.06,
@@ -260,7 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           InkWell(
             onTap: () {
+
               Navigator.pop(context);
+
             },
             child: Container(
               decoration: BoxDecoration(
@@ -279,26 +302,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 showSnackBar(message: 'add user Success', context: context);
                 Navigator.pop(context);
               }
+
               if (state is HomeFailure) {
                 showSnackBar(message: 'adding Failed', context: context);
               }
+
+
             },
             builder: (context, state) {
               if (state is HomeLoader) {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
               return InkWell(
                 onTap: () {
-                  final userModel=UserModel(
-                      image: '',
+                  String img = "";
+                  final storageState = context.read<StorageBloc>().state;
+                  if (storageState is StorageSuccess) {
+                    img = storageState.url;
+                  }
+                  final userModel = UserModel(
+                      image: img,
                       age: int.tryParse(ageController.text.trim()) ?? 0,
                       name: nameController.text.trim(),
                       search: []);
-                  context.read<HomeBloc>().add(AddUser(
-                      userModel: userModel));
-                  context.read<HomekBloc>().add(AddUserModel(userModel: userModel));
+                  context.read<HomeBloc>().add(AddUser(userModel: userModel));
+                  context
+                      .read<HomekBloc>()
+                      .add(AddUserModel(userModel: userModel));
                 },
                 child: Container(
                   decoration: BoxDecoration(

@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     width=MediaQuery.of(context).size.width;
     return  Scaffold(
       backgroundColor: Colors.black,
-      body:Center(child: Image.asset(AssetsConstant.logo)),
+      body:Center(child:Text('Loading ...........')),
     );
   }
 }
