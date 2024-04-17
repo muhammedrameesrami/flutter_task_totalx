@@ -125,16 +125,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   return InkWell(
                     onTap: () {
-                      // context.read<AuthkBloc>().add(OtpVerificationRequested(
-                      //     phoneNumber: phoneController.text));
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpScreen(
-                              phoneNumber: phoneController.text.trim(),
-                              verificationId:'',
-                            ),
-                          ));
+                      context.read<AuthkBloc>().add(OtpVerificationRequested(
+                          phoneNumber: phoneController.text));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => OtpScreen(
+                      //         phoneNumber: phoneController.text.trim(),
+                      //         verificationId:'',
+                      //       ),
+                      //     ));
                     },
                     child: Container(
                       height: height * 0.06,

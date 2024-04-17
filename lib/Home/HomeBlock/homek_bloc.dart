@@ -28,6 +28,25 @@ emit(fetchUsers);
       emit(state+[event.userModel]);
     });
 
+    on<SortUser>((event, emit) async {
+      List<UserModel> users=[];
+var user=[...state];
+if(event.sort=='Elder') {
+  for (int i = 0; i < user.length ; i++) {
+    if (user[i].age > 60) {
+      users.add(user[i]);
+    }
+  }
+}if(event.sort=='Younger'){
+  for(int j=0;j<user.length;j++){
+    if(user[j].age<60){
+      users.add(user[j]);
+  }
+  }
+      }
+emit(users);
+    });
+
     on<SearchUser>((event, emit) async {
 var users=[...state];
 

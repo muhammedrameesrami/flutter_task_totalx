@@ -97,8 +97,8 @@ if(state is AuthKSuccess){
     }
     return InkWell(
                 onTap: () {
-                  // context.read<AuthkBloc>().add(OtpVerification(otp: otpController.text.trim(), verificationId: widget.verificationId));
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                  context.read<AuthkBloc>().add(OtpVerification(otp: otpController.text.trim(), verificationId: widget.verificationId));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                 },
                 child: Container(
                   height: height * 0.06,

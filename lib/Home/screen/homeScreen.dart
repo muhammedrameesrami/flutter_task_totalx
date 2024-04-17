@@ -384,6 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: 1,
                       groupValue: sortingValue,
                       onChanged: (value) {
+                        context.read<HomekBloc>().add(SortUser('Elder'));
                         setState(() {
                           sortingValue = value!;
                         });
@@ -401,6 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: 2,
                       groupValue: sortingValue,
                       onChanged: (value) {
+                        context.read<HomekBloc>().add(SortUser('Younger'));
                         setState(() {
                           sortingValue = value!;
                         });

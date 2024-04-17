@@ -16,3 +16,8 @@ final class SearchUser extends HomekEvent{
   final String search;
   SearchUser({required this.search});
 }
+
+final class SortUser extends HomekEvent{
+  final String sort;
+  SortUser([this.sort="all"]);
+}
