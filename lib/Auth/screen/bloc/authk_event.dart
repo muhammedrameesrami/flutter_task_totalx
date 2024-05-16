@@ -5,7 +5,8 @@ sealed class AuthkEvent {}
 
 final class OtpVerificationRequested extends AuthkEvent {
   final String phoneNumber;
-  OtpVerificationRequested({required this.phoneNumber});
+  final BuildContext context;
+  OtpVerificationRequested({required this.phoneNumber,required this.context});
 }
 final class OtpVerification extends AuthkEvent {
   final String otp;

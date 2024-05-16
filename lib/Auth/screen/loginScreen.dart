@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_task_totalx/Auth/screen/verificationIdBloc/verification_id_cubit.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Core/Common/globalVariable/GlobalVariable.dart';
 import '../../Core/Common/SnackBar/ShowSnackBar.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
-import '../authBlock/authk_bloc.dart';
+import 'bloc/authk_bloc.dart';
 import 'otpScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -104,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
               BlocConsumer<AuthkBloc, AuthkState>(
                 listener: (context, state) {
                   if (state is AuthKSuccess) {
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -125,8 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   return InkWell(
                     onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OtpScreen(
+                              phoneNumber: phoneController.text.trim(),
+                              verificationId: 'state.verificationId',
+                            ),
+                          ));
                       context.read<AuthkBloc>().add(OtpVerificationRequested(
-                          phoneNumber: phoneController.text));
+                          phoneNumber: phoneController.text, context: context));
                       // Navigator.push(
                       //     context,
                       //     MaterialPageRoute(

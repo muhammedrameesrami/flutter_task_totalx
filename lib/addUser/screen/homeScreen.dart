@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_task_totalx/Auth/authBlock/authk_bloc.dart';
 import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
-import 'package:flutter_task_totalx/Home/HomeBlock/homek_bloc.dart';
-import 'package:flutter_task_totalx/Home/storageBlock/storage_bloc.dart';
+import 'package:flutter_task_totalx/Core/Common/functionCommon/setseach.dart';
+import 'package:flutter_task_totalx/addUser/screen/pickingImageUrl/picking_image_url_cubit.dart';
+
 import 'package:flutter_task_totalx/userModel.dart';
 
+import '../../Auth/screen/bloc/authk_bloc.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
+import '../../Core/Common/blocCommon/storageBlock/storage_bloc.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
-import '../addhomeBlock/home_bloc.dart';
+import 'bloc/add_user_bloc.dart';
+import 'getbloc/get_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,16 +21,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController searchController = TextEditingController();
+  List<UserModel> filteredUsers = [];
+  int sortingValue = 0;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
-      context.read<HomekBloc>().add(FetchUserData());
+      context.read<GetBloc>().add(FetchEvent());
     });
   }
 
-  TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,13 +50,24 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         backgroundColor: Colors.grey.shade200,
-        body: BlocBuilder<HomekBloc, List<UserModel>>(
+        body: BlocBuilder< GetBloc, List<UserModel>>(
           builder: (context, state) {
             if (state.isEmpty) {
               return Center(
                 child: Text('No data'),
               );
             }
+
+            // Filter the users based on search query
+            if (searchController.text.isNotEmpty) {
+              filteredUsers = state.where((user) =>
+                  user.name.toLowerCase().contains(
+                    searchController.text.toLowerCase(),
+                  )).toList();
+            } else {
+              filteredUsers = state;
+            }
+
             return Padding(
               padding: EdgeInsets.only(
                   left: width * 0.03, right: width * 0.03, top: width * 0.03),
@@ -65,9 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: height * 0.06,
                           width: width * 0.8,
-                          child: TextFormField(onChanged: (value) {
-                            context.read<HomekBloc>().add(SearchUser(search: value));
-                          },
+                          child: TextFormField(
                             controller: searchController,
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.search),
@@ -123,59 +138,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: state.length,
                           itemBuilder: (context, index) {
                             final user = state[index];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: Container(
-                                height: height * 0.1,
-                                width: width,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(6),
-                                      child: user.image.isEmpty
-                                          ? CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  AssetsConstant.loginImage),
-                                              radius: height * 0.05,
-                                            )
-                                          : CircleAvatar(
-                                              backgroundImage:
-                                                  NetworkImage(user.image),
-                                              radius: height * 0.05,
-                                            ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'User : ${user.name}',
-                                          style: TextStyle(
-                                              fontSize: width * 0.04,
-                                              color: Colors.black),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Age: ${user.age}',
-                                          style: TextStyle(
-                                              fontSize: width * 0.035,
-                                              color: Colors.grey.shade600),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
+                            print(sortingValue);
+                           if(searchController.text.isEmpty){
+                             if(sortingValue==0){
+                             return listUser(user);}else if(sortingValue==1&&user.age>18){
+                               return listUser(user);
+                             }else {
+                               if(user.age<=18){
+                               return listUser(user);}
+                             }
+                           }else if(user.search.contains(searchController.text.toUpperCase())){
+                             return listUser(user);
+                           }else{
+                             return const SizedBox();
+                           }
                           }),
                     )
                   ],
@@ -202,6 +178,62 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Padding listUser(UserModel user) {
+    return Padding(
+                             padding: EdgeInsets.symmetric(vertical: 5),
+                             child: Container(
+                               height: height * 0.1,
+                               width: width,
+                               decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.circular(10),
+                                 color: Colors.white,
+                               ),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.start,
+                                 children: [
+                                   Padding(
+                                     padding: EdgeInsets.all(6),
+                                     child: user.image.isEmpty
+                                         ? CircleAvatar(
+                                       backgroundImage: AssetImage(
+                                           AssetsConstant.loginImage),
+                                       radius: height * 0.05,
+                                     )
+                                         : CircleAvatar(
+                                       backgroundImage:
+                                       NetworkImage(user.image),
+                                       radius: height * 0.05,
+                                     ),
+                                   ),
+                                   Column(
+                                     crossAxisAlignment:
+                                     CrossAxisAlignment.start,
+                                     mainAxisAlignment:
+                                     MainAxisAlignment.center,
+                                     children: [
+                                       Text(
+                                         'User : ${user.name}',
+                                         style: TextStyle(
+                                             fontSize: width * 0.04,
+                                             color: Colors.black),
+                                       ),
+                                       SizedBox(
+                                         height: 10,
+                                       ),
+                                       Text(
+                                         'Age: ${user.age}',
+                                         style: TextStyle(
+                                             fontSize: width * 0.035,
+                                             color: Colors.grey.shade600),
+                                       )
+                                     ],
+                                   )
+                                 ],
+                               ),
+                             ),
+                           );
+  }
+
   Future<void> addNewUser({required BuildContext context}) async {
     TextEditingController nameController = TextEditingController();
     TextEditingController ageController = TextEditingController();
@@ -212,40 +244,30 @@ class _HomeScreenState extends State<HomeScreen> {
         content: SizedBox(
           height: height * 0.3,
           width: width * 0.8,
-          child: Column(
+          child: BlocConsumer<StorageBloc, StorageState>(
+  listener: (context, state) {
+    if(state is StorageSuccess){
+      context.read<PickingImageUrlCubit>().updateImageUrl(url: state.url);
+    }
+  },
+  builder: (context, state) {
+    return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlocBuilder<StorageBloc, StorageState>(
-                builder: (context, state) {
-                  if (state is AuthkLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (state is StorageSuccess) {
-                    return InkWell(
-                      onTap: () {
-                        context.read<StorageBloc>().add(AddDocStorage());
-                      },
-                      child: SizedBox(
-                        height: height * 0.1,
-                        width: width,
-                        child: Image.network(state.url),
-                      ),
-                    );
-                  }
-                  return InkWell(
-                    onTap: () {
-                      context.read<StorageBloc>().add(AddDocStorage());
-                    },
-                    child: SizedBox(
-                      height: height * 0.1,
-                      width: width,
-                      child: Image.asset(AssetsConstant.defaultAvatar),
-                    ),
-                  );
+              BlocBuilder<PickingImageUrlCubit, String>(
+  builder: (context, state) {
+    return InkWell(
+                onTap: () {
+                  context.read<StorageBloc>().add(AddDocStorage());
                 },
-              ),
+                child: SizedBox(
+                  height: height * 0.1,
+                  width: width,
+                  child: state.isNotEmpty?Image.network(state):Image.asset(AssetsConstant.defaultAvatar),
+                ),
+              );
+  },
+),
               Text('Name'),
               SizedBox(
                 height: height * 0.06,
@@ -276,14 +298,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
-          ),
+          );
+  },
+),
         ),
         actions: [
           InkWell(
             onTap: () {
-
               Navigator.pop(context);
-
             },
             child: Container(
               decoration: BoxDecoration(
@@ -296,41 +318,40 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          BlocConsumer<HomeBloc, HomeState>(
+          BlocConsumer<AddUserBloc, AddUserState>(
             listener: (context, state) {
-              if (state is HomeSuccess) {
+              if (state is AddUserSuccess) {
                 showSnackBar(message: 'add user Success', context: context);
                 Navigator.pop(context);
               }
 
-              if (state is HomeFailure) {
+              if (state is AddUserFailure) {
                 showSnackBar(message: 'adding Failed', context: context);
               }
-
-
             },
             builder: (context, state) {
-              if (state is HomeLoader) {
+              if (state is AddUserLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              return InkWell(
+              return BlocBuilder<PickingImageUrlCubit, String>(
+  builder: (context, state) {
+    return InkWell(
                 onTap: () {
-                  String img = "";
-                  final storageState = context.read<StorageBloc>().state;
-                  if (storageState is StorageSuccess) {
-                    img = storageState.url;
-                  }
-                  final userModel = UserModel(
-                      image: img,
-                      age: int.tryParse(ageController.text.trim()) ?? 0,
+                  context.read<AddUserBloc>().add(AddUser(
                       name: nameController.text.trim(),
-                      search: []);
-                  context.read<HomeBloc>().add(AddUser(userModel: userModel));
-                  context
-                      .read<HomekBloc>()
-                      .add(AddUserModel(userModel: userModel));
+                      age: int.tryParse(ageController.text.trim()) ?? 0,
+                      image: state));
+                  // context.read<GetBloc>().add(AddUserModelGetEvent(
+                  //     userModel: UserModel(
+                  //         name: nameController.text.trim(),
+                  //         uid: '',
+                  //         image:'',
+                  //         age: int.tryParse(ageController.text.trim()) ?? 0,
+                  //         search: setSearchParam(nameController.text.trim()) +
+                  //             setSearchParam(ageController.text.trim()))));
+
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -343,6 +364,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               );
+  },
+);
             },
           )
         ],
@@ -351,7 +374,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void sortingBox({required BuildContext context}) {
-    int sortingValue = 0;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -369,6 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onChanged: (value) {
                         setState(() {
                           sortingValue = value!;
+
                         });
                       },
                     ),
@@ -384,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: 1,
                       groupValue: sortingValue,
                       onChanged: (value) {
-                        context.read<HomekBloc>().add(SortUser('Elder'));
+                        // context.read<HomekBloc>().add(SortUser('Elder'));
                         setState(() {
                           sortingValue = value!;
                         });
@@ -402,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: 2,
                       groupValue: sortingValue,
                       onChanged: (value) {
-                        context.read<HomekBloc>().add(SortUser('Younger'));
+                        // context.read<HomekBloc>().add(SortUser('Younger'));
                         setState(() {
                           sortingValue = value!;
                         });
