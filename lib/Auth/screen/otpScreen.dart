@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_task_totalx/Auth/screen/verificationIdBloc/verification_id_cubit.dart';
-import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
 import 'package:pinput/pinput.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
 import '../../addUser/screen/homeScreen.dart';
-import 'bloc/authk_bloc.dart';
+import '../controller/bloc/authk_bloc.dart';
 
 class OtpScreen extends StatefulWidget {
   final String verificationId;

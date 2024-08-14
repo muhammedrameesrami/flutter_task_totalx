@@ -10,7 +10,7 @@ import 'package:flutter_task_totalx/addUser/repository/home_repository.dart';
 import 'package:flutter_task_totalx/addUser/screen/getbloc/get_bloc.dart';
 import 'package:flutter_task_totalx/addUser/screen/pickingImageUrl/picking_image_url_cubit.dart';
 import 'package:flutter_task_totalx/addUser/screen/sortBloc/sort_bloc.dart';
-import 'Auth/screen/bloc/authk_bloc.dart';
+import 'Auth/controller/bloc/authk_bloc.dart';
 import 'Auth/screen/verificationIdBloc/verification_id_cubit.dart';
 import 'Core/Common/blocCommon/storageBlock/storage_bloc.dart';
 import 'Core/Common/splashScreen/splashScreen.dart';

@@ -6,7 +6,6 @@ import 'package:flutter_task_totalx/addUser/screen/pickingImageUrl/picking_image
 
 import 'package:flutter_task_totalx/userModel.dart';
 
-import '../../Auth/screen/bloc/authk_bloc.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/blocCommon/storageBlock/storage_bloc.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';

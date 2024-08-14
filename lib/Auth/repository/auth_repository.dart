@@ -12,9 +12,10 @@ class AuthRepository {
   AuthRepository({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
 
-  Future<Either<Failure, String>> requestOtp({required String number,required BuildContext context}) async {
+  /// request otp in firebase repository
+  Future<Either<Failure, String>> requestOtp(
+      {required String number, required BuildContext context}) async {
     try {
-
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: '+91$number',
         verificationCompleted: (phoneAuthCredential) async {
@@ -24,8 +25,9 @@ class AuthRepository {
           throw error.code;
         },
         codeSent: (verificationId, forceResendingToken) {
-          context.read<VerificationIdCubit>().updateVerificationId(id: verificationId);
-
+          context
+              .read<VerificationIdCubit>()
+              .updateVerificationId(id: verificationId);
         },
         codeAutoRetrievalTimeout: (verificationId) {},
       );
@@ -35,6 +37,7 @@ class AuthRepository {
     }
   }
 
+  /// verified the resived firebase otp is correct or not
   Future<Either<Failure, String>> verifyOtp(
       {required String verificationId, required String otp}) async {
     try {
@@ -42,9 +45,9 @@ class AuthRepository {
           verificationId: verificationId, smsCode: otp);
       final res = await _firebaseAuth.signInWithCredential(credential);
       if (res.user == null) {
-        return left(Failure('invalid otp'));
+        return left(Failure('InValid Otp'));
       }
-      return right('successfully verified');
+      return right('Successfully Verified');
     } catch (e) {
       return left(Failure(e.toString()));
     }

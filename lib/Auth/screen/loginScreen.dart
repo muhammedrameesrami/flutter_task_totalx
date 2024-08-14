@@ -9,7 +9,7 @@ import '../../../Core/Common/globalVariable/GlobalVariable.dart';
 import '../../Core/Common/SnackBar/ShowSnackBar.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
-import 'bloc/authk_bloc.dart';
+import '../controller/bloc/authk_bloc.dart';
 import 'otpScreen.dart';
 
 class LoginScreen extends StatefulWidget {
