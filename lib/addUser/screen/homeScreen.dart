@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_task_totalx/Core/Common/SnackBar/ShowSnackBar.dart';
-import 'package:flutter_task_totalx/Core/Common/functionCommon/setseach.dart';
 import 'package:flutter_task_totalx/addUser/screen/pickingImageUrl/picking_image_url_cubit.dart';
-
 import 'package:flutter_task_totalx/userModel.dart';
-
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/blocCommon/storageBlock/storage_bloc.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
@@ -23,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
   List<UserModel> filteredUsers = [];
   int sortingValue = 0;
+  ScrollController _scrollController = ScrollController();
+
 
   @override
   void initState() {
@@ -31,6 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
       context.read<GetBloc>().add(FetchEvent());
     });
+
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+      }
+    });
+    
   }
 
   @override

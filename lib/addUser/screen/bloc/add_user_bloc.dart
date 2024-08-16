@@ -28,6 +28,8 @@ class AddUserBloc extends Bloc<AddUserEvent, AddUserState> {
     res.fold((l) {
      return emit(AddUserFailure(error: l.message));
     }, (r) {
+
+
       return emit(AddUserSuccess());
     });
   }

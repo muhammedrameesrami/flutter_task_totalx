@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_task_totalx/Auth/screen/verificationIdBloc/verification_id_cubit.dart';
 import 'package:pinput/pinput.dart';
+import '../../Core/Common/SnackBar/ShowSnackBar.dart';
 import '../../Core/Common/assetsConstant/asstesConstants.dart';
 import '../../Core/Common/globalVariable/GlobalVariable.dart';
 import '../../addUser/screen/homeScreen.dart';
@@ -88,9 +89,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));
                   }
-                  // if (state is AuthkFailure) {
-                  //   showSnackBar(message: 'otp verification failed', context: context);
-                  // }
+                  if (state is AuthkFailure) {
+                    showSnackBar(message: 'otp verification failed', context: context);
+                  }
                 },
                 builder: (context, state) {
                   if (state is AuthkLoading) {
